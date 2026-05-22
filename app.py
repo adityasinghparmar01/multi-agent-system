@@ -2,7 +2,7 @@ import streamlit as st
 import time
 from agents import build_reader_agent, build_search_agent, writer_chain, critic_chain
 
-# ── Page config ──────────────────────────────────────────────────────────────
+# page ki basic settings yaha se set ho rahi hain
 st.set_page_config(
     page_title="ResearchMind · AI Research Agent",
     page_icon="🔬",
@@ -10,12 +10,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ── Custom CSS ────────────────────────────────────────────────────────────────
+# thoda custom css add kiya hai taki app normal streamlit jaisa na lage
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
-/* ── Reset & base ── */
+/* basic font aur text color */
 html, body, [class*="css"] {
     font-family: 'DM Sans', sans-serif;
     color: #e8e4dc;
@@ -28,11 +28,11 @@ html, body, [class*="css"] {
         radial-gradient(ellipse 60% 40% at 80% 110%, rgba(255,80,30,0.08) 0%, transparent 55%);
 }
 
-/* ── Hide default streamlit chrome ── */
+/* streamlit ka default menu/header hide kar diya */
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding: 2rem 3rem 4rem; max-width: 1200px; }
 
-/* ── Hero header ── */
+/* upar wala main heading section */
 .hero {
     text-align: center;
     padding: 3.5rem 0 2.5rem;
@@ -69,14 +69,14 @@ html, body, [class*="css"] {
     line-height: 1.65;
 }
 
-/* ── Divider ── */
+/* simple line divider */
 .divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255,140,50,0.3), transparent);
     margin: 2rem 0;
 }
 
-/* ── Input card ── */
+/* topic input ke liye card style */
 .input-card {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,140,50,0.15);
@@ -86,7 +86,7 @@ html, body, [class*="css"] {
     backdrop-filter: blur(8px);
 }
 
-/* ── Streamlit input overrides ── */
+/* default input box ko customize kar rahe hain */
 .stTextInput > div > div > input {
     background: rgba(255,255,255,0.05) !important;
     border: 1px solid rgba(255,140,50,0.25) !important;
@@ -110,7 +110,7 @@ html, body, [class*="css"] {
     font-weight: 500 !important;
 }
 
-/* ── Button ── */
+/* run button styling */
 .stButton > button {
     background: linear-gradient(135deg, #ff8c32 0%, #ff5a1a 100%) !important;
     color: #0a0a0f !important;
@@ -135,7 +135,7 @@ html, body, [class*="css"] {
     transform: translateY(0) !important;
 }
 
-/* ── Pipeline step cards ── */
+/* pipeline ke har step ka card */
 .step-card {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.07);
@@ -196,7 +196,7 @@ html, body, [class*="css"] {
 .status-running  { color: #ff8c32; }
 .status-done     { color: #50c878; }
 
-/* ── Result panels ── */
+/* raw output wale panels */
 .result-panel {
     background: rgba(255,255,255,0.025);
     border: 1px solid rgba(255,255,255,0.07);
@@ -224,7 +224,7 @@ html, body, [class*="css"] {
     font-family: 'DM Sans', sans-serif;
 }
 
-/* ── Report & feedback panels ── */
+/* final report aur critic feedback ka section */
 .report-panel {
     background: rgba(255,255,255,0.025);
     border: 1px solid rgba(255,140,50,0.2);
@@ -256,10 +256,10 @@ html, body, [class*="css"] {
     border-bottom: 1px solid rgba(80,200,120,0.15);
 }
 
-/* ── Progress text ── */
+/* spinner ka color */
 .stSpinner > div { color: #ff8c32 !important; }
 
-/* ── Expander ── */
+/* expander title styling */
 details summary {
     font-family: 'DM Mono', monospace !important;
     font-size: 0.75rem !important;
@@ -268,7 +268,7 @@ details summary {
     cursor: pointer;
 }
 
-/* ── Section heading ── */
+/* section headings */
 .section-heading {
     font-family: 'Syne', sans-serif;
     font-size: 1.3rem;
@@ -277,7 +277,7 @@ details summary {
     margin: 2rem 0 1rem;
 }
 
-/* ── Toast-style notice ── */
+/* bottom footer text */
 .notice {
     font-family: 'DM Mono', monospace;
     font-size: 0.72rem;
@@ -290,7 +290,7 @@ details summary {
 """, unsafe_allow_html=True)
 
 
-# ── Helper: render a step card ────────────────────────────────────────────────
+# ye function ek pipeline step card banata hai
 def step_card(num: str, title: str, state: str, desc: str = ""):
     status_map = {
         "waiting": ("WAITING", "status-waiting"),
@@ -311,13 +311,13 @@ def step_card(num: str, title: str, state: str, desc: str = ""):
     """, unsafe_allow_html=True)
 
 
-# ── Session state init ────────────────────────────────────────────────────────
+# session state me values nahi hain to pehle initialize kar lete hain
 for key in ("results", "running", "done"):
     if key not in st.session_state:
         st.session_state[key] = {} if key == "results" else False
 
 
-# ── Hero ──────────────────────────────────────────────────────────────────────
+# top heading / hero section
 st.markdown("""
 <div class="hero">
     <div class="hero-eyebrow">Multi-Agent AI System</div>
@@ -331,7 +331,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ── Layout: input left, pipeline right ───────────────────────────────────────
+# left side input aur right side pipeline status
 col_input, col_spacer, col_pipeline = st.columns([5, 0.5, 4])
 
 with col_input:
@@ -345,7 +345,7 @@ with col_input:
     run_btn = st.button("⚡  Run Research Pipeline", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Example chips
+    # bas kuch sample topics dikhane ke liye chips banaye hain
     st.markdown("""
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;">
         <span style="font-family:'DM Mono',monospace;font-size:0.68rem;color:#605850;letter-spacing:0.1em;">TRY →</span>
@@ -378,10 +378,10 @@ with col_pipeline:
         steps = ["search", "reader", "writer", "critic"]
         idx = steps.index(step)
         completed = list(r.keys())
-        # figure out which steps are done
+        # agar step ka output aa gaya hai to done dikhao
         if step in r:
             return "done"
-        # which step is running now (first not in r)
+        # jo pehla pending step hai usko running dikha denge
         if st.session_state.running:
             for i, k in enumerate(steps):
                 if k not in r:
@@ -394,7 +394,7 @@ with col_pipeline:
     step_card("04", "Critic Chain",  s("critic"), "Reviews & scores the report")
 
 
-# ── Run pipeline ──────────────────────────────────────────────────────────────
+# button click hone ke baad actual pipeline run hogi
 if run_btn:
     if not topic.strip():
         st.warning("Please enter a research topic first.")
@@ -408,7 +408,7 @@ if st.session_state.running and not st.session_state.done:
     results = {}
     topic_val = st.session_state.topic_input
 
-    # ── Step 1: Search ──
+    # step 1: search agent topic ke related data dhundhega
     with st.spinner("🔍  Search Agent is working…"):
         search_agent = build_search_agent()
         sr = search_agent.invoke({
@@ -416,9 +416,9 @@ if st.session_state.running and not st.session_state.done:
         })
         results["search"] = sr["messages"][-1].content
         st.session_state.results = dict(results)
-    st.rerun() if False else None   # keep inline for now
+    # yaha rerun intentionally nahi kar rahe, pipeline same flow me chal rahi hai
 
-    # ── Step 2: Reader ──
+    # step 2: reader agent search result me se useful content nikalega
     with st.spinner("📄  Reader Agent is scraping top resources…"):
         reader_agent = build_reader_agent()
         rr = reader_agent.invoke({
@@ -431,7 +431,7 @@ if st.session_state.running and not st.session_state.done:
         results["reader"] = rr["messages"][-1].content
         st.session_state.results = dict(results)
 
-    # ── Step 3: Writer ──
+    # step 3: writer chain final research report banayegi
     with st.spinner("✍️  Writer is drafting the report…"):
         research_combined = (
             f"SEARCH RESULTS:\n{results['search']}\n\n"
@@ -443,7 +443,7 @@ if st.session_state.running and not st.session_state.done:
         })
         st.session_state.results = dict(results)
 
-    # ── Step 4: Critic ──
+    # step 4: critic report ko review karega
     with st.spinner("🧐  Critic is reviewing the report…"):
         results["critic"] = critic_chain.invoke({
             "report": results["writer"]
@@ -455,14 +455,14 @@ if st.session_state.running and not st.session_state.done:
     st.rerun()
 
 
-# ── Results display ───────────────────────────────────────────────────────────
+# agar results available hain to niche show kar do
 r = st.session_state.results
 
 if r:
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-heading">Results</div>', unsafe_allow_html=True)
 
-    # Raw outputs in expanders
+    # raw search aur reader output ko expander me rakha hai
     if "search" in r:
         with st.expander("🔍 Search Results (raw)", expanded=False):
             st.markdown(f'<div class="result-panel"><div class="result-panel-title">Search Agent Output</div>'
@@ -473,7 +473,7 @@ if r:
             st.markdown(f'<div class="result-panel"><div class="result-panel-title">Reader Agent Output</div>'
                         f'<div class="result-content">{r["reader"]}</div></div>', unsafe_allow_html=True)
 
-    # Final report
+    # final report yaha render hogi
     if "writer" in r:
         st.markdown("""
         <div class="report-panel">
@@ -482,7 +482,7 @@ if r:
         st.markdown(r["writer"])   # render markdown natively
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # Download
+        # report ko markdown file me download karne ka option
         st.download_button(
             label="⬇  Download Report (.md)",
             data=r["writer"],
@@ -490,7 +490,7 @@ if r:
             mime="text/markdown",
         )
 
-    # Critic feedback
+    # critic ka feedback yaha show hoga
     if "critic" in r:
         st.markdown("""
         <div class="feedback-panel">
@@ -500,7 +500,7 @@ if r:
         st.markdown("</div>", unsafe_allow_html=True)
 
 
-# ── Footer ────────────────────────────────────────────────────────────────────
+# simple footer
 st.markdown("""
 <div class="notice">
     ResearchMind · Powered by LangChain multi-agent pipeline · Built with Streamlit

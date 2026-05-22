@@ -4,7 +4,7 @@ def run_research_pipeline(topic : str) -> dict:
 
     state = {}
 
-    #search agent working 
+    #search agent working  banao
     print("\n"+" ="*50)
     print("step 1 - search agent is working ...")
     print("="*50)
@@ -17,7 +17,7 @@ def run_research_pipeline(topic : str) -> dict:
 
     print("\n search result ",state['search_results'])
 
-    #step 2 - reader agent 
+    #step 2 - reader agent create karo jo url scrape karega
     print("\n"+" ="*50)
     print("step 2 - Reader agent is scraping top resources ...")
     print("="*50)
@@ -53,7 +53,7 @@ def run_research_pipeline(topic : str) -> dict:
 
     print("\n Final Report\n",state['report'])
 
-    #critic report 
+    #critic report banao jo report ko review karega
 
     print("\n"+" ="*50)
     print("step 4 - critic is reviewing the report ")
